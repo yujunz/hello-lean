@@ -77,7 +77,7 @@ example (n : Nat) : 0 + n = n := by
 the left leaves it unchanged. `Nat.zero_add n` supplies a proof for a
 particular `n`, and `exact` uses that proof to finish the goal.
 
-See the [upstream proof of `Nat.zero_add` in Lean v4.34.1](https://github.com/leanprover/lean4/blob/v4.34.1/src/Init/Data/Nat/Basic.lean#L123-L125),
+See the [upstream proof of `Nat.zero_add` in Lean v4.34.1](https://github.com/leanprover/lean4/blob/v4.34.1/src/Init/Data/Nat/Basic.lean#L135-L137),
 the version pinned in this repository. It uses the same zero and successor
 cases shown below, expressed as a recursive proof.
 
