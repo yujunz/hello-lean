@@ -72,11 +72,20 @@ example (n : Nat) : 0 + n = n := by
 
 ## Check the proofs
 
-With Lean 4 installed, check the proofs with:
+With [elan](https://github.com/leanprover/elan) installed, run this from
+the repository directory. Elan selects the Lean version pinned in
+`lean-toolchain`, downloading it if needed:
 
 ```sh
-lean Examples.lean
+lean -DwarningAsError=true Examples.lean
 ```
 
 A successful check exits without errors. Changing `5` to `6` in the first
 theorem causes Lean to reject that proof.
+
+## Continuous integration
+
+The [Check Lean proofs](https://github.com/yujunz/hello-lean/actions/workflows/lean.yml)
+GitHub Actions workflow runs the same check on every push and pull request.
+It can also be run manually from the Actions tab. Warnings are treated as
+errors, so unfinished proofs using `sorry` fail the check too.
