@@ -70,6 +70,50 @@ example (n : Nat) : 0 + n = n := by
   exact Nat.zero_add n
 ```
 
+### Proving `0 + n = n` by induction
+
+`Nat.zero_add` is an existing theorem with the type
+`∀ (n : Nat), 0 + n = n`: for every natural number `n`, adding zero on
+the left leaves it unchanged. `Nat.zero_add n` supplies a proof for a
+particular `n`, and `exact` uses that proof to finish the goal.
+
+See the [upstream proof of `Nat.zero_add` in Lean v4.34.1](https://github.com/leanprover/lean4/blob/v4.34.1/src/Init/Data/Nat/Basic.lean#L123-L125),
+the version pinned in this repository. It uses the same zero and successor
+cases shown below, expressed as a recursive proof.
+
+We can prove the same statement ourselves by induction:
+
+```lean
+theorem zero_add_by_induction (n : Nat) : 0 + n = n := by
+  induction n with
+  | zero =>
+      rfl
+  | succ n ih =>
+      change Nat.succ (0 + n) = Nat.succ n
+      exact congrArg Nat.succ ih
+```
+
+`induction n` splits the proof into two cases:
+
+- **Zero:** the goal is `0 + 0 = 0`, which follows directly from the
+  definition of addition, so `rfl` finishes it.
+- **Successor:** `ih` is the induction hypothesis, a proof of
+  `0 + n = n`. We must prove `0 + Nat.succ n = Nat.succ n`.
+  The addition rule reduces its left side to `Nat.succ (0 + n)`.
+  `change` writes the goal in this equivalent form. Then
+  `congrArg Nat.succ ih` applies the successor function to both sides
+  of the equality in `ih`, proving the required equality.
+
+The successor step can also be read as:
+
+```text
+0 + succ(n) = succ(0 + n) = succ(n)
+```
+
+The first equality follows from the definition of addition; the second
+uses the induction hypothesis. Together, the zero case and successor
+step establish the statement for every natural number.
+
 ## Check the proofs
 
 With [elan](https://github.com/leanprover/elan) installed, run this from
