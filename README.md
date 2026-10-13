@@ -102,7 +102,8 @@ The new tactics in this proof are:
   replaces the goal with a definitionally equal statement, making the
   computation explicit without requiring a separate proof of equivalence.
 
-`congrArg` is a theorem used as a proof term: given `h : a = b`,
+[`congrArg`](https://lean-lang.org/doc/reference/latest/Basic-Propositions/Propositional-Equality/#congrArg)
+is a theorem used as a proof term: given `h : a = b`,
 `congrArg f h` proves `f a = f b`. Below, `exact` uses it with
 `f = Nat.succ` and `h = ih`.
 
@@ -159,3 +160,16 @@ errors, so unfinished proofs using
 [`sorry`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#sorry)
 fail the check too. `sorry` is a placeholder that lets Lean accept an
 unfinished proof while emitting a warning.
+
+## Bibliography
+
+- Lean Language Reference, [Reflexivity: `rfl`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#rfl).
+- Lean Language Reference, [Running tactics: `by`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Running-Tactics/#by).
+- Lean Language Reference, [Supplying a proof: `exact`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#exact).
+- Lean v4.34.1 source, [`Nat.zero_add` in `Init/Data/Nat/Basic.lean`, lines 135–137](https://github.com/leanprover/lean4/blob/v4.34.1/src/Init/Data/Nat/Basic.lean#L135-L137).
+- Lean Language Reference, [Induction: `induction`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#induction).
+- Lean Language Reference, [Changing the goal: `change`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#change).
+- Lean Language Reference, [Congruence in a function argument: `congrArg`](https://lean-lang.org/doc/reference/latest/Basic-Propositions/Propositional-Equality/#congrArg).
+- Lean prover project, [elan: Lean toolchain manager](https://github.com/leanprover/elan).
+- Hello Lean, [Check Lean proofs CI workflow](https://github.com/yujunz/hello-lean/actions/workflows/lean.yml).
+- Lean Language Reference, [Unfinished proof placeholder: `sorry`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#sorry).
