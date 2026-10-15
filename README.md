@@ -145,6 +145,15 @@ the repository directory. Elan selects the Lean version pinned in
 `lean-toolchain`, downloading it if needed:
 
 ```sh
+lake build
+```
+
+[Lake](https://github.com/leanprover/lean4/tree/v4.34.1/src/lake)
+is Lean's build tool. `lakefile.toml` declares every proof file as a build
+target and enables `warningAsError`. A single file can also be checked
+directly:
+
+```sh
 lean -DwarningAsError=true Examples.lean
 ```
 
