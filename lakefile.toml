@@ -1,0 +1,12 @@
+name = "hello-lean"
+defaultTargets = ["Examples", "FunctionalProgrammingInLean"]
+
+[leanOptions]
+warningAsError = true
+
+[[lean_lib]]
+name = "Examples"
+
+[[lean_lib]]
+name = "FunctionalProgrammingInLean"
+globs = ["FunctionalProgrammingInLean.+"]
