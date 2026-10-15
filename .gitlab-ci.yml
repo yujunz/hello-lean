@@ -1,0 +1,26 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+check-proofs:
+  image: ubuntu:24.04
+  tags: [os/linux, type/docker, size/medium]
+  timeout: 15m
+  variables:
+    ELAN_VERSION: v4.2.4
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq --no-install-recommends ca-certificates curl zstd >/dev/null
+    - curl --fail -sS -L "https://github.com/leanprover/elan/releases/download/${ELAN_VERSION}/elan-x86_64-unknown-linux-gnu.tar.gz" | tar -xz -C /tmp
+    - /tmp/elan-init -y --default-toolchain none --no-modify-path
+    - export PATH="$HOME/.elan/bin:$PATH"
+    # Fetch the toolchain pinned in lean-toolchain from GitHub releases.
+    - TC=$(cat lean-toolchain); V=${TC##*:v}
+    - mkdir -p "$HOME/.elan/manual"
+    - curl --fail -sS -L "https://github.com/leanprover/lean4/releases/download/v$V/lean-$V-linux.tar.zst" | tar --zstd -x -C "$HOME/.elan/manual"
+    - elan toolchain link "$TC" "$HOME/.elan/manual/lean-$V-linux"
+  script:
+    - lean --version
+    - lake build
