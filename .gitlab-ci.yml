@@ -37,11 +37,28 @@ push-to-github:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"
   variables:
     GIT_DEPTH: 0
-    GITHUB_REPO: github.com/yujunz/hello-lean.git
+    GITHUB_REPO: yujunz/hello-lean
     GITHUB_BRANCH: gitlab
+    GITHUB_BASE_BRANCH: main
   before_script:
-    - apt-get update -qq && apt-get install -y -qq --no-install-recommends ca-certificates git >/dev/null
+    - apt-get update -qq && apt-get install -y -qq --no-install-recommends ca-certificates git gh >/dev/null
   script:
-    # GITHUB_PUSH_TOKEN: masked, protected CI/CD variable holding a GitHub token with contents:write on the repo.
+    # GITHUB_PUSH_TOKEN: masked, protected CI/CD variable holding a GitHub token with
+    # contents, workflows and pull requests write access on the repo.
     - test -n "$GITHUB_PUSH_TOKEN" || { echo "GITHUB_PUSH_TOKEN is not set"; exit 1; }
-    - git push "https://x-access-token:${GITHUB_PUSH_TOKEN}@${GITHUB_REPO}" "${CI_COMMIT_SHA}:refs/heads/${GITHUB_BRANCH}"
+    - git push "https://x-access-token:${GITHUB_PUSH_TOKEN}@github.com/${GITHUB_REPO}.git" "${CI_COMMIT_SHA}:refs/heads/${GITHUB_BRANCH}"
+    # Open a PR from the sync branch into the GitHub base branch unless it is up to date or a PR is already open.
+    - |
+      set -euo pipefail
+      export GH_TOKEN="$GITHUB_PUSH_TOKEN" GH_PROMPT_DISABLED=1
+      ahead=$(gh api "repos/${GITHUB_REPO}/compare/${GITHUB_BASE_BRANCH}...${GITHUB_BRANCH}" --jq .ahead_by)
+      open=$(gh pr list -R "$GITHUB_REPO" --base "$GITHUB_BASE_BRANCH" --head "$GITHUB_BRANCH" --state open --json number --jq length)
+      if [ "$ahead" -eq 0 ]; then
+        echo "${GITHUB_BASE_BRANCH} already contains ${GITHUB_BRANCH}"
+      elif [ "$open" -gt 0 ]; then
+        echo "PR from ${GITHUB_BRANCH} is already open"
+      else
+        gh pr create -R "$GITHUB_REPO" --base "$GITHUB_BASE_BRANCH" --head "$GITHUB_BRANCH" \
+          --title "Sync from GitLab main" \
+          --body "Syncs \`${GITHUB_BASE_BRANCH}\` with \`${CI_DEFAULT_BRANCH}\` of ${CI_PROJECT_URL} (opened by ${CI_PIPELINE_URL})."
+      fi
